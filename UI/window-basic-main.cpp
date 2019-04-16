@@ -407,6 +407,13 @@ OBSBasic::OBSBasic(QWidget *parent)
 		this,
 		SLOT(ScenesReordered(const QModelIndex &, int, int,
 				     const QModelIndex &, int)));
+
+	QString url =
+				"https://obsproject.com/wiki/General-Performance-and-Encoding-Issues";
+	ShowNotification(OBS_NOTIFY_TYPE_WARNING,
+					       QTStr("HighResourceUsage"),
+					       OBS_NOTIFY_ACTION_OPEN_URL,
+					       QTStr("LearnMore"), url);
 }
 
 static void SaveAudioDevice(const char *name, int channel, obs_data_t *parent,
@@ -7938,4 +7945,31 @@ void OBSBasic::on_customContextMenuRequested(const QPoint &pos)
 
 	if (!className || strstr(className, "Dock") != nullptr)
 		ui->viewMenuDocks->exec(mapToGlobal(pos));
+}
+
+void OBSBasic::ShowNotification(enum obs_notify_type type, QString message,
+				enum obs_notify_action action, QString buttonText,
+				QString url, OBSSource source)
+{
+	if (notify)
+		return;
+
+	notify = new OBSNotifications(type, message, action, this);
+
+	notify->SetButtonText(buttonText);
+	notify->SetURL(url);
+	notify->SetSource(source);
+
+	notify->setFixedWidth(width());
+	notify->setMinimumHeight(60);
+	notify->move(0, 24);
+	notify->show();
+}
+
+void OBSBasic::resizeEvent(QResizeEvent *event)
+{
+	QMainWindow::resizeEvent(event);
+
+	if (notify)
+		notify->setFixedWidth(width());
 }

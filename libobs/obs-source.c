@@ -4953,3 +4953,22 @@ void obs_source_media_ended(obs_source_t *source)
 
 	obs_source_dosignal(source, NULL, "media_ended");
 }
+
+void obs_source_show_notification(obs_source_t *source, enum obs_notify_type type,
+				  const char *message, enum obs_notify_action action,
+				  const char *button_text, const char *url)
+{
+	if (obs_source_valid(source, "obs_source_show_notification")) {
+		struct calldata data;
+		uint8_t stack[128];
+
+		calldata_init_fixed(&data, stack, sizeof(stack));
+		calldata_set_int(&data, "type", (int)type);
+		calldata_set_string(&data, "message", message);
+		calldata_set_int(&data, "action", (int)action);
+		calldata_set_string(&data, "button_text", button_text);
+		calldata_set_string(&data, "url", url);
+
+		signal_handler_signal(obs->signals, "show_notification", &data);
+	}
+}

@@ -265,3 +265,33 @@ QSlider::handle:horizontal[themeID="tBarSlider"] {
 	height: 24px;
 	margin: -24px 0px;
 }
+
+/* Notifications Widget */
+
+* [themeID="notifyButton"] {
+    border: 1px solid #d2d2d2;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+* [themeID="notifyCloseButton"] {
+    image: url(:/res/images/notifications/close.svg);
+}
+
+* [themeID="notifyText"] {
+    font-weight: bold;
+    color: #d2d2d2;
+    font-size: 14px;
+}
+
+* [themeID="notifyIconInfo"] {
+    image: url(:/res/images/notifications/info.svg);
+}
+
+* [themeID="notifyIconWarning"] {
+    image: url(:/res/images/notifications/warning.svg);
+}
+
+* [themeID="notifyIconError"] {
+    image: url(:/res/images/notifications/error.svg);
+}

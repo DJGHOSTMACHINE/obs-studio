@@ -34,6 +34,7 @@
 #include "window-projector.hpp"
 #include "window-basic-about.hpp"
 #include "auth-base.hpp"
+#include "notifications-widget.hpp"
 
 #include <obs-frontend-internal.hpp>
 
@@ -446,6 +447,7 @@ private:
 	void dragLeaveEvent(QDragLeaveEvent *event) override;
 	void dragMoveEvent(QDragMoveEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override;
 
 	void ReplayBufferClicked();
 
@@ -515,6 +517,8 @@ private:
 
 	OBSSource GetOverrideTransition(OBSSource source);
 	int GetOverrideTransitionDuration(OBSSource source);
+
+	OBSNotifications *notify = nullptr;
 
 public slots:
 	void DeferSaveBegin();
@@ -804,6 +808,11 @@ public:
 	QIcon GetGroupIcon() const;
 	QIcon GetSceneIcon() const;
 
+	void ShowNotification(enum obs_notify_type type, QString message,
+			      enum obs_notify_action action = OBS_NOTIFY_ACTION_DO_NOTHING,
+			      QString buttonText = nullptr,
+			      QString url = nullptr, OBSSource = nullptr);
+
 protected:
 	virtual void closeEvent(QCloseEvent *event) override;
 	virtual void changeEvent(QEvent *event) override;
@@ -813,7 +822,6 @@ private slots:
 
 	void on_actionShow_Recordings_triggered();
 	void on_actionRemux_triggered();
-	void on_action_Settings_triggered();
 	void on_actionAdvAudioProperties_triggered();
 	void on_advAudioProps_clicked();
 	void on_advAudioProps_destroyed();
@@ -968,6 +976,7 @@ private slots:
 
 public slots:
 	void on_actionResetTransform_triggered();
+	void on_action_Settings_triggered();
 
 	bool StreamingActive();
 	bool RecordingActive();

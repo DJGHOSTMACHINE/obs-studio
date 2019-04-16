@@ -135,6 +135,19 @@ enum obs_bounds_type {
 	OBS_BOUNDS_MAX_ONLY,        /**< no scaling, maximum size only */
 };
 
+enum obs_notify_type {
+	OBS_NOTIFY_TYPE_INFO,
+	OBS_NOTIFY_TYPE_ERROR,
+	OBS_NOTIFY_TYPE_WARNING,
+};
+
+enum obs_notify_action {
+	OBS_NOTIFY_ACTION_DO_NOTHING,
+	OBS_NOTIFY_ACTION_OPEN_URL,
+	OBS_NOTIFY_ACTION_OPEN_SETTINGS,
+	OBS_NOTIFY_ACTION_OPEN_PROPERTIES,
+};
+
 struct obs_transform_info {
 	struct vec2 pos;
 	float rot;

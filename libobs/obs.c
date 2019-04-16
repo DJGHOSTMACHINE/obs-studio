@@ -729,6 +729,9 @@ static const char *obs_signals[] = {
 	"void hotkey_unregister(ptr hotkey)",
 	"void hotkey_bindings_changed(ptr hotkey)",
 
+	"void show_notification(ptr source, int type, string message, "
+	"int action, string button_text, string url)",
+
 	NULL,
 };
 
