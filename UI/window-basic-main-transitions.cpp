@@ -526,7 +526,8 @@ void OBSBasic::on_transitionRemove_clicked()
 {
 	OBSSource tr = GetCurrentTransition();
 
-	if (!tr || !obs_source_configurable(tr) || !QueryRemoveSource(tr))
+	if (!tr || !obs_source_configurable(tr) ||
+	    !std::get<0>(QueryRemoveSource(tr)))
 		return;
 
 	int idx = ui->transitions->findData(QVariant::fromValue<OBSSource>(tr));
@@ -687,9 +688,24 @@ void OBSBasic::SetCurrentScene(OBSSource scene, bool force)
 		}
 	}
 
+	bool useFirst = false;
+	const char *name = obs_source_get_name(scene);
+
+	QList<QListWidgetItem *> items =
+		ui->scenes->findItems(QT_UTF8(name), Qt::MatchExactly);
+
+	if (items.count())
+		useFirst = true;
+
 	if (obs_scene_get_source(GetCurrentScene()) != scene) {
 		for (int i = 0; i < ui->scenes->count(); i++) {
-			QListWidgetItem *item = ui->scenes->item(i);
+			QListWidgetItem *item;
+
+			if (!useFirst)
+				item = ui->scenes->item(i);
+			else
+				item = items.first();
+
 			OBSScene itemScene = GetOBSRef<OBSScene>(item);
 			obs_source_t *source = obs_scene_get_source(itemScene);
 
@@ -704,8 +720,6 @@ void OBSBasic::SetCurrentScene(OBSSource scene, bool force)
 			}
 		}
 	}
-
-	UpdateSceneSelection(scene);
 
 	bool userSwitched = (!force && !disableSaving);
 	blog(LOG_INFO, "%s to scene '%s'",
