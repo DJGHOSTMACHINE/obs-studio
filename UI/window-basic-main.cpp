@@ -1104,6 +1104,7 @@ retryScene:
 
 	copyStrings.clear();
 	copyFiltersString = nullptr;
+	copyFilter = nullptr;
 
 	LogScenes();
 
