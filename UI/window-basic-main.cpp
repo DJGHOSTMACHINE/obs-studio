@@ -259,7 +259,7 @@ OBSBasic::OBSBasic(QWidget *parent)
 					 "gridMode");
 	ui->scenes->SetGridMode(sceneGrid);
 
-	ui->scenes->setItemDelegate(new SceneRenameDelegate(ui->scenes));
+	ui->scenes->setItemDelegate(new SceneDelegate(ui->scenes));
 
 	auto displayResize = [this]() {
 		struct obs_video_info ovi;
@@ -2720,6 +2720,8 @@ void OBSBasic::UpdateSceneSelection(OBSSource source)
 					OBS_FRONTEND_EVENT_PREVIEW_SCENE_CHANGED);
 		}
 	}
+
+	SetProgramIndicator();
 }
 
 static void RenameListValues(QListWidget *listWidget, const QString &newName,
@@ -7646,13 +7648,10 @@ bool OBSBasic::ReplayBufferActive()
 	return outputHandler->ReplayBufferActive();
 }
 
-SceneRenameDelegate::SceneRenameDelegate(QObject *parent)
-	: QStyledItemDelegate(parent)
-{
-}
+SceneDelegate::SceneDelegate(QObject *parent) : QStyledItemDelegate(parent) {}
 
-void SceneRenameDelegate::setEditorData(QWidget *editor,
-					const QModelIndex &index) const
+void SceneDelegate::setEditorData(QWidget *editor,
+				  const QModelIndex &index) const
 {
 	QStyledItemDelegate::setEditorData(editor, index);
 	QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
@@ -7660,7 +7659,7 @@ void SceneRenameDelegate::setEditorData(QWidget *editor,
 		lineEdit->selectAll();
 }
 
-bool SceneRenameDelegate::eventFilter(QObject *editor, QEvent *event)
+bool SceneDelegate::eventFilter(QObject *editor, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
@@ -7672,6 +7671,14 @@ bool SceneRenameDelegate::eventFilter(QObject *editor, QEvent *event)
 	}
 
 	return QStyledItemDelegate::eventFilter(editor, event);
+}
+
+void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+			  const QModelIndex &index) const
+{
+	QStyleOptionViewItem opt(option);
+	opt.decorationPosition = QStyleOptionViewItem::Right;
+	QStyledItemDelegate::paint(painter, opt, index);
 }
 
 void OBSBasic::UpdatePatronJson(const QString &text, const QString &error)
@@ -7920,4 +7927,32 @@ void OBSBasic::on_customContextMenuRequested(const QPoint &pos)
 
 	if (!className || strstr(className, "Dock") != nullptr)
 		ui->viewMenuDocks->exec(mapToGlobal(pos));
+}
+
+void OBSBasic::SetProgramIndicator()
+{
+	if (!IsPreviewProgramMode())
+		return;
+
+	for (int i = 0; i < ui->scenes->count(); i++) {
+		QListWidgetItem *item = ui->scenes->item(i);
+		OBSScene scene = GetOBSRef<OBSScene>(item);
+
+		obs_source_t *source = obs_scene_get_source(scene);
+
+		if (source == GetProgramSource()) {
+			item->setIcon(
+				QIcon(":res/images/program-indicator.svg"));
+		} else {
+			item->setIcon(QIcon());
+		}
+	}
+}
+
+void OBSBasic::ResetProgramIndicator()
+{
+	for (int i = 0; i < ui->scenes->count(); i++) {
+		QListWidgetItem *item = ui->scenes->item(i);
+		item->setIcon(QIcon());
+	}
 }

@@ -516,6 +516,9 @@ private:
 	OBSSource GetOverrideTransition(OBSSource source);
 	int GetOverrideTransitionDuration(OBSSource source);
 
+	void SetProgramIndicator();
+	void ResetProgramIndicator();
+
 public slots:
 	void DeferSaveBegin();
 	void DeferSaveEnd();
@@ -990,13 +993,16 @@ private:
 	std::unique_ptr<Ui::OBSBasic> ui;
 };
 
-class SceneRenameDelegate : public QStyledItemDelegate {
+class SceneDelegate : public QStyledItemDelegate {
 	Q_OBJECT
 
 public:
-	SceneRenameDelegate(QObject *parent);
+	SceneDelegate(QObject *parent);
 	virtual void setEditorData(QWidget *editor,
 				   const QModelIndex &index) const override;
+	virtual void paint(QPainter *painter,
+			   const QStyleOptionViewItem &option,
+			   const QModelIndex &index) const override;
 
 protected:
 	virtual bool eventFilter(QObject *editor, QEvent *event) override;

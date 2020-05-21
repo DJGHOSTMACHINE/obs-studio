@@ -1373,6 +1373,8 @@ void OBSBasic::SetPreviewProgramMode(bool enabled)
 		ui->previewLayout->setAlignment(programOptions,
 						Qt::AlignCenter);
 
+		SetProgramIndicator();
+
 		if (api)
 			api->on_event(OBS_FRONTEND_EVENT_STUDIO_MODE_ENABLED);
 
@@ -1410,6 +1412,8 @@ void OBSBasic::SetPreviewProgramMode(bool enabled)
 
 		ui->transitions->setEnabled(true);
 		tBarActive = false;
+
+		ResetProgramIndicator();
 
 		if (api)
 			api->on_event(OBS_FRONTEND_EVENT_STUDIO_MODE_DISABLED);
